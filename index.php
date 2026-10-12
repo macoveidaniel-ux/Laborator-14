@@ -1,92 +1,68 @@
 <?php
 $dir = 'galerie';
-$thumbDir = 'galerie/thumbs';
-
-if (!is_dir($dir)) mkdir($dir, 0755, true);
-if (!is_dir($thumbDir)) mkdir($thumbDir, 0755, true);
-
-$toateFisierele = array_diff(scandir($dir), [".", "..", "thumbs"]);
-$imagini = array_filter($toateFisierele, function($file) use ($dir) {
-    return is_file($dir . '/' . $file) && preg_match('/\.(jpg|jpeg|png|gif)$/i', $file);
-});
+if (!is_dir($dir)) {
+    mkdir($dir, 0777, true);
+}
+$imagini = array_diff(scandir($dir), [".", ".."]);
 ?>
 <!DOCTYPE html>
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galerie de imagini</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    <title>Galerie Foto PRO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen bg-gray-100 text-gray-900">
-    <main class="mx-auto max-w-4xl px-4 py-6 sm:px-6">
-        <header class="mb-5 flex items-center justify-between">
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        <header class="flex flex-col md:flex-row justify-between items-center bg-white p-6 rounded-xl shadow-sm mb-8 border border-slate-100">
             <div>
-                <h1 class="text-2xl font-bold">Galerie de imagini</h1>
-                <p class="mt-1 text-sm text-gray-600">Încarcă și gestionează imaginile.</p>
+                <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Galeria de Imagini</h1>
+                <p class="text-sm text-slate-500 mt-1">Încarcă, vizualizează și gestionează pozele tale</p>
             </div>
-            <span class="rounded-full bg-indigo-100 px-3 py-1 text-sm font-medium text-indigo-800">
-                <?= count($imagini); ?>
-                <?= count($imagini) === 1 ? 'imagine' : 'imagini'; ?>
-            </span>
+            <div class="mt-4 md:mt-0 flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-lg">
+                <span class="text-blue-700 font-bold text-lg"><?= count($imagini) ?></span>
+                <span class="text-blue-600 text-sm font-medium"><?= count($imagini) === 1 ? 'imagine' : 'imagini' ?></span>
+            </div>
         </header>
 
-        <section class="mb-5 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-            <form action="upload.php" method="post" enctype="multipart/form-data" class="sm:flex sm:items-end sm:space-x-3">
-                <div class="flex-1">
-                    <label for="file" class="mb-1 block text-sm font-medium text-gray-700">Adaugă o imagine</label>
-                    <input
-                        type="file"
-                        name="file"
-                        id="file"
-                        accept="image/jpeg, image/png, image/gif"
-                        required
-                        class="block w-full rounded-md border border-gray-300 bg-white p-2 text-sm text-gray-700 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    >
-                    <p class="mt-1 text-xs text-gray-500">JPG, PNG sau GIF · maximum 2 MB</p>
+        <section class="bg-white p-6 rounded-xl shadow-sm mb-8 border border-slate-100">
+            <form action="upload.php" method="post" enctype="multipart/form-data" class="flex flex-col md:flex-row gap-4 items-center">
+                <div class="flex-1 w-full">
+                    <label for="file" class="block text-sm font-semibold text-slate-700 mb-2">Selectează o imagine</label>
+                    <input type="file" name="file" id="file" accept="image/jpeg,image/png,image/gif" required class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-colors border border-slate-200 rounded-lg cursor-pointer">
+                    <p class="mt-2 text-xs text-slate-400">JPG, PNG sau GIF · Maximum 2 MB</p>
                 </div>
-                <button
-                    type="submit"
-                    class="mt-3 w-full rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto"
-                >Încarcă</button>
+                <button type="submit" class="w-full md:w-auto mt-4 md:mt-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3 px-8 rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all">
+                    Încarcă
+                </button>
             </form>
         </section>
 
         <section aria-label="Imagini încărcate">
             <?php if (empty($imagini)): ?>
-                <p class="rounded-lg border border-dashed border-gray-300 bg-white px-4 py-8 text-center text-sm text-gray-500">
-                    Nu există imagini. Încarcă prima imagine folosind formularul de mai sus.
-                </p>
+                <div class="bg-white rounded-xl border-2 border-dashed border-slate-200 p-12 text-center">
+                    <p class="text-slate-500 text-lg">Nu ai încărcat nicio imagine încă.</p>
+                </div>
             <?php else: ?>
-                <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-                    <?php foreach ($imagini as $imagine): ?>
-                        <?php
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <?php foreach ($imagini as $imagine): 
                         $numeImagine = htmlspecialchars($imagine, ENT_QUOTES, 'UTF-8');
                         $fisierImagine = rawurlencode($imagine);
-                        $caleAfisare = file_exists("$thumbDir/$imagine") ? "$thumbDir/$fisierImagine" : "galerie/$fisierImagine";
-                        ?>
-                        <article class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-                            <a href="galerie/<?= $fisierImagine; ?>" target="_blank" aria-label="Afișează <?= $numeImagine; ?>">
-                                <img
-                                    src="<?= $caleAfisare; ?>"
-                                    alt="<?= $numeImagine; ?>"
-                                    loading="lazy"
-                                    class="h-32 w-full bg-gray-100 object-cover"
-                                >
+                    ?>
+                        <article class="group relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-slate-100">
+                            <a href="galerie/<?= $numeImagine ?>" target="_blank" class="block aspect-square overflow-hidden bg-slate-100" aria-label="Afișează <?= $numeImagine ?>">
+                                <img src="galerie/<?= $numeImagine ?>" alt="<?= $numeImagine ?>" loading="lazy" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300">
                             </a>
-                            <div class="flex items-center justify-between gap-2 p-2 text-xs font-medium">
-                                <a href="download.php?file=<?= $fisierImagine; ?>" class="text-indigo-700 hover:text-indigo-900">Descarcă</a>
-                                <a
-                                    href="delete.php?file=<?= $fisierImagine; ?>"
-                                    class="text-red-600 hover:text-red-800"
-                                    aria-label="Șterge <?= $numeImagine; ?>"
-                                >Șterge</a>
+                            <div class="p-4 flex justify-between items-center bg-white border-t border-slate-50">
+                                <a href="download.php?file=<?= $fisierImagine ?>" class="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors">Descarcă</a>
+                                <a href="delete.php?file=<?= $fisierImagine ?>" class="text-sm font-semibold text-red-500 hover:text-red-700 transition-colors">Șterge</a>
                             </div>
                         </article>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
         </section>
-    </main>
+    </div>
 </body>
 </html>
